@@ -1,15 +1,17 @@
-import { CreateComment } from "../../domain/use-cases/CreateComment";
-import { CommentRepository } from "../../domain/repositories/CommentRepository";
 import { Comment } from "../../domain/entities/Comment";
+import { CommentRepository } from "../../domain/repositories/CommentRepository";
+import { GeminiModerationService } from "../../application/services/GeminiModerationService";
 
 export class CreateCommentService {
-  private useCase: CreateComment;
+  private moderation: GeminiModerationService;
 
-  constructor(repo: CommentRepository) {
-    this.useCase = new CreateComment(repo);
+  constructor(private repo: CommentRepository, moderationService: GeminiModerationService) {
+    this.moderation = moderationService;
   }
 
-  async execute(content: string): Promise<Comment> {
-    return this.useCase.execute(content);
+  async execute(content: string, name: string): Promise<Comment> {
+    const status = await this.moderation.analyzeComment(content);
+    const comment = new Comment({ content, name, status });
+    return await this.repo.save(comment);
   }
 }
