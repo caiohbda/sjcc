@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { MODERATION_PROMPT } from "../../prompts/moderationPrompt";
+import { MODERATION_PROMPT } from "../../infra/prompts/moderationPrompt";
 
 export class GeminiModerationService {
   private gemini: GoogleGenerativeAI;
